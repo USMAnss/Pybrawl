@@ -15,7 +15,7 @@ class Sprite:
         old_position=self.position
         self.position=self.image.get_rect()
         self.position.topleft=old_position.topleft
-        
+
         dx=self.position.left-relative_rect.left
         self.position.right=relative_rect.right-dx
 
@@ -35,7 +35,7 @@ class Bar:
 
     def get_rect(self):
         return self.position
-    
+
     def flip(self, relative_rect):
         self.image=pygame.transform.flip(self.image, True, False)
 
@@ -43,21 +43,23 @@ class Bar:
         self.position=self.image.get_rect()
         self.area=pygame.Rect(self.position)
         self.position.topleft=old_position.topleft
-        
+
         dx=self.position.left-relative_rect.left
         self.position.right=relative_rect.right-dx
 
         self.flipped=not self.flipped
 
     def update(self, fraction):
-        self.area.width*=fraction
+        self.area.width=self.position.width*fraction
 
         if self.flipped:
             self.area.left=self.position.width-self.area.width
-            self.position.left+=self.area.left
 
     def draw(self, screen):
-        screen.blit(self.image, self.position, self.area)
+        dest=pygame.Rect(self.position)
+        if self.flipped:
+            dest.left+=self.area.left
+        screen.blit(self.image, dest, self.area)
 
 
 class Hud:
@@ -66,7 +68,7 @@ class Hud:
                "health": (62, 29),
                "mana": (70, 51),
                "icon": (-10, 10)}
-    
+
     def __init__(self, images, position):
         self.frame=Sprite(images["frame"],
                          (position[0] + self.POSITIONS["frame"][0],
@@ -111,7 +113,7 @@ class Hud:
     def update(self, health_fraction, mana_fraction):
         self.health.update(health_fraction)
         self.mana.update(mana_fraction)
-    
+
     def draw(self, screen):
         self.frame.draw(screen)
         self.health.draw(screen)

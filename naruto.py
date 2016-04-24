@@ -9,11 +9,13 @@ class Character:
         self.runleft=images["runleft"]
         self.jump=images["jump"]
         self.attack=images["attack"]
+        self.takedamage=images["takedamage"]
         self.ani_stance=Animation(self.stance, 10)
         self.ani_runright=Animation(self.runright, 7)
         self.ani_runleft=Animation(self.runleft, 7)
         self.ani_jump=Animation(self.jump, 13)
         self.ani_attack=Animation(self.attack, 7)
+        self.ani_takedamage=Animation(self.takedamage, 10)
         self.state="stance"
         self.img=self.ani_stance.img
         self.rect=self.img.get_rect()
@@ -27,9 +29,13 @@ class Character:
         self.damage=100
 
     def update(self, keys_status):
-        if (self.state!="jump" and self.state!="attack") or (self.ani_jump.done or self.ani_attack.done):
+        self.replenish_mana()
+
+        if ((self.state!="jump" and self.state!="attack" and self.state!="takedamage") or
+            (self.ani_jump.done or self.ani_attack.done or self.ani_takedamage.done)):
             self.ani_jump.reset()
             self.ani_attack.reset()
+            self.ani_takedamage.reset()
             if keys_status[self.controls["jump"]]:
                 self.state="jump"
             elif keys_status[self.controls["right"]] and keys_status[self.controls["left"]]:
@@ -61,7 +67,12 @@ class Character:
                 self.rect.x-=1
             elif self.direction=="right":
                 self.rect.x+=1
-        
+        elif self.state=="takedamage":
+            if self.direction=="left":
+                self.rect.x+=1
+            elif self.direction=="right":
+                self.rect.x-=1
+
         if self.state=="stance":
             self.ani_stance.update()
             self.img=self.ani_stance.img
@@ -77,6 +88,9 @@ class Character:
         elif self.state=="jump":
             self.ani_jump.update()
             self.img=self.ani_jump.img
+        elif self.state=="takedamage":
+            self.ani_takedamage.update()
+            self.img=self.ani_takedamage.img
 
         self.old_rect=self.rect
         self.rect=self.img.get_rect()
@@ -84,7 +98,7 @@ class Character:
 
         if self.direction=="left" and not self.state in ["runright", "runleft"]:
             self.img=pygame.transform.flip(self.img, True, False)
-        
+
 
     def draw(self, screen):
         self.adjust_height(screen)
@@ -93,8 +107,16 @@ class Character:
     def adjust_height(self, screen):
         if self.state!="jump":
             self.rect.bottom=screen.get_height()
-            
-                
+
+    def take_damage(self, damage):
+        if self.state!="takedamage":
+            self.health=max(0, self.health-damage)
+            self.state="takedamage"
+
+    def replenish_mana(self):
+        self.mana=min(self.max_mana, self.mana+100)
+
+
 class Animation:
     def __init__(self, pictures, speed):
         self.ani_speed_init=speed
@@ -104,7 +126,7 @@ class Animation:
         self.ani_max=len(self.ani)-1
         self.img=self.ani[0]
         self.done=False
-        
+
     def update(self):
         self.ani_speed-=1
         if self.ani_speed==0:
@@ -113,10 +135,10 @@ class Animation:
                 self.done=True
             self.img=self.ani[self.ani_pos]
             self.ani_speed=self.ani_speed_init
-    
+
     def reset(self):
         self.ani_speed=self.ani_speed_init
         self.ani_pos=0
         self.img=self.ani[0]
         self.done=False
-        
+

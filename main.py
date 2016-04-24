@@ -43,6 +43,8 @@ NARUTO_IMAGES = {"stance": ["Naruto/new_sprites/stance0.png",
                  "attack": ["Naruto/new_sprites/normal_attack0.png",
                             "Naruto/new_sprites/normal_attack1.png",
                             "Naruto/new_sprites/normal_attack2.png"],
+                 "takedamage": ["Naruto/new_sprites/take_damage0.png",
+                                "Naruto/new_sprites/take_damage1.png"],
                  "icon": "Hud/naruto_icon.png"}
 
 SASUKE_IMAGES = {"stance": ["Sasuke/new_sprites/stance0.gif",
@@ -73,6 +75,9 @@ SASUKE_IMAGES = {"stance": ["Sasuke/new_sprites/stance0.gif",
                             "Sasuke/new_sprites/normal_attack1.png",
                             "Sasuke/new_sprites/normal_attack2.png",
                             "Sasuke/new_sprites/normal_attack3.png"],
+                 "takedamage": ["Sasuke/new_sprites/take_damage0.png",
+                                "Sasuke/new_sprites/take_damage1.png",
+                                "Sasuke/new_sprites/take_damage2.png"],
                  "icon": "Hud/sasuke_icon.png"}
 
 HUD_IMAGES = {"frame": "Hud/frame.png",
@@ -97,9 +102,9 @@ def collide(left, right):
         return
     #deal damage
     if left.state=="attack":
-        right.health-=left.damage
+        right.take_damage(left.damage)
     if right.state=="attack":
-        left.health-=right.damage
+        left.take_damage(right.damage)
     #adjust position
     if left.rect.centerx>right.rect.centerx:
         left, right=right, left
