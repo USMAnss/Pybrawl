@@ -10,12 +10,16 @@ class Character:
         self.jump=images["jump"]
         self.attack=images["attack"]
         self.takedamage=images["takedamage"]
+        self.throw=images["throw"]
+        self.projectile_images={"throw": images["throw_projectile"]}
+        self.projectiles=[]
         self.ani_stance=Animation(self.stance, 10)
         self.ani_runright=Animation(self.runright, 7)
         self.ani_runleft=Animation(self.runleft, 7)
         self.ani_jump=Animation(self.jump, 13)
         self.ani_attack=Animation(self.attack, 7)
         self.ani_takedamage=Animation(self.takedamage, 10)
+        self.ani_throw=Animation(self.throw, 7)
         self.state="stance"
         self.img=self.ani_stance.img
         self.rect=self.img.get_rect()
@@ -30,18 +34,34 @@ class Character:
 
     def update(self, keys_status):
         self.replenish_mana()
+        self.update_projectiles()
 
-        if ((self.state!="jump" and self.state!="attack" and self.state!="takedamage") or
-            (self.ani_jump.done or self.ani_attack.done or self.ani_takedamage.done)):
+        if ((self.state!="jump" and self.state!="attack" and self.state!="takedamage" and self.state!="throw") or
+            (self.ani_jump.done or self.ani_attack.done or self.ani_takedamage.done or self.ani_throw.done)):
+            if self.state=="throw":
+                if self.direction=="left":
+                    self.projectiles.append(Projectile(self.rect.midleft,
+                                                       (-7, 0),
+                                                       100,
+                                                       *self.projectile_images["throw"]))
+                elif self.direction=="right":
+                    self.projectiles.append(Projectile(self.rect.midright,
+                                                       (+7, 0),
+                                                       100,
+                                                       *self.projectile_images["throw"]))
+
             self.ani_jump.reset()
             self.ani_attack.reset()
             self.ani_takedamage.reset()
+            self.ani_throw.reset()
             if keys_status[self.controls["jump"]]:
                 self.state="jump"
-            elif keys_status[self.controls["right"]] and keys_status[self.controls["left"]]:
-                self.state="stance"
             elif keys_status[self.controls["attack"]]:
                 self.state="attack"
+            elif keys_status[self.controls["throw"]]:
+                self.state="throw"
+            elif keys_status[self.controls["right"]] and keys_status[self.controls["left"]]:
+                self.state="stance"
             elif keys_status[self.controls["right"]]:
                 self.state="runright"
             elif keys_status[self.controls["left"]]:
@@ -91,6 +111,9 @@ class Character:
         elif self.state=="takedamage":
             self.ani_takedamage.update()
             self.img=self.ani_takedamage.img
+        elif self.state=="throw":
+            self.ani_throw.update()
+            self.img=self.ani_throw.img
 
         self.old_rect=self.rect
         self.rect=self.img.get_rect()
@@ -104,6 +127,9 @@ class Character:
         self.adjust_height(screen)
         screen.blit(self.img, self.rect.topleft)
 
+        for projectile in self.projectiles:
+            projectile.draw(screen)
+
     def adjust_height(self, screen):
         if self.state!="jump":
             self.rect.bottom=screen.get_height()
@@ -116,21 +142,35 @@ class Character:
     def replenish_mana(self):
         self.mana=min(self.max_mana, self.mana+100)
 
+    def update_projectiles(self):
+        new_projectiles=[]
+        for projectile in self.projectiles:
+            if projectile.is_on_screen(800, 600):
+                projectile.update()
+                new_projectiles.append(projectile)
+        self.projectiles=new_projectiles
+
+
 
 class Animation:
-    def __init__(self, pictures, speed):
+    def __init__(self, pictures, speed, loop=None):
         self.ani_speed_init=speed
         self.ani_speed=self.ani_speed_init
         self.ani=[load_image(picture) for picture in pictures]
         self.ani_pos=0
         self.ani_max=len(self.ani)-1
         self.img=self.ani[0]
+        self.loop=loop if loop is not None else (0, self.ani_max)
         self.done=False
 
     def update(self):
+        # if not self.done:
         self.ani_speed-=1
         if self.ani_speed==0:
-            self.ani_pos=(self.ani_pos+1)%len(self.ani)
+            if self.ani_pos==self.loop[1]:
+                self.ani_pos=self.loop[0]
+            else:
+                self.ani_pos=(self.ani_pos+1)%len(self.ani)
             if self.ani_pos==0:
                 self.done=True
             self.img=self.ani[self.ani_pos]
@@ -142,3 +182,31 @@ class Animation:
         self.img=self.ani[0]
         self.done=False
 
+    def stop(self):
+        self.done=True
+
+class Projectile:
+    def __init__(self, position, velocity, damage, images, loop):
+        self.ani=Animation(images, 7, loop)
+        self.rect=self.ani.img.get_rect()
+        self.rect.center=position
+        self.velocity=velocity
+        self.damage=damage
+
+    def draw(self, screen):
+        screen.blit(self.ani.img, self.rect)
+
+    def update(self):
+        self.rect.x+=self.velocity[0]
+        self.rect.y+=self.velocity[1]
+
+        old_rect=self.rect
+        self.ani.update()
+        self.rect=self.ani.img.get_rect()
+        self.rect.center=old_rect.center
+
+    def is_on_screen(self, screen_width, screen_height):
+        return (self.rect.left < screen_width and
+                self.rect.right > 0 and
+                self.rect.bottom > 0 and
+                self.rect.top < screen_height)

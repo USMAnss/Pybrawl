@@ -45,6 +45,18 @@ NARUTO_IMAGES = {"stance": ["Naruto/new_sprites/stance0.png",
                             "Naruto/new_sprites/normal_attack2.png"],
                  "takedamage": ["Naruto/new_sprites/take_damage0.png",
                                 "Naruto/new_sprites/take_damage1.png"],
+                 "throw": ["Naruto/new_sprites/throw0.png",
+                           "Naruto/new_sprites/throw1.png",
+                           "Naruto/new_sprites/throw2.png",
+                           "Naruto/new_sprites/throw3.png",
+                           "Naruto/new_sprites/throw4.png"],
+                 "throw_projectile": [["Naruto/new_sprites/rasengan0.png",
+                                       "Naruto/new_sprites/rasengan1.png",
+                                       "Naruto/new_sprites/rasengan2.png",
+                                       "Naruto/new_sprites/rasengan3.png",
+                                       "Naruto/new_sprites/rasengan4.png",
+                                       "Naruto/new_sprites/rasengan5.png"],
+                                      (4, 5)],
                  "icon": "Hud/naruto_icon.png"}
 
 SASUKE_IMAGES = {"stance": ["Sasuke/new_sprites/stance0.gif",
@@ -78,6 +90,17 @@ SASUKE_IMAGES = {"stance": ["Sasuke/new_sprites/stance0.gif",
                  "takedamage": ["Sasuke/new_sprites/take_damage0.png",
                                 "Sasuke/new_sprites/take_damage1.png",
                                 "Sasuke/new_sprites/take_damage2.png"],
+                 "throw": ["Sasuke/new_sprites/throw0.png",
+                           "Sasuke/new_sprites/throw1.png",
+                           "Sasuke/new_sprites/throw2.png",
+                           "Sasuke/new_sprites/throw3.png"],
+                 "throw_projectile": [["Sasuke/new_sprites/lightning0.png",
+                                       "Sasuke/new_sprites/lightning1.png",
+                                       "Sasuke/new_sprites/lightning2.png",
+                                       "Sasuke/new_sprites/lightning3.png",
+                                       "Sasuke/new_sprites/lightning4.png",
+                                       "Sasuke/new_sprites/lightning5.png"],
+                                      (4, 5)],
                  "icon": "Hud/sasuke_icon.png"}
 
 HUD_IMAGES = {"frame": "Hud/frame.png",
@@ -90,14 +113,29 @@ RIGHT_HUD_POSITION = (WIDTH-230, 0)
 PLAYER1_CONTROLS = {"left": K_a,
                     "right": K_d,
                     "jump": K_w,
-                    "attack": K_t}
+                    "attack": K_t,
+                    "throw": K_y}
 
 PLAYER2_CONTROLS = {"left": K_LEFT,
                     "right": K_RIGHT,
                     "jump": K_UP,
-                    "attack": K_KP4}
+                    "attack": K_KP4,
+                    "throw": K_KP5}
+
+def collide_projectiles(left, right):
+    new_projectiles=[]
+    for projectile in left.projectiles:
+        if projectile.rect.colliderect(right.rect):
+            right.take_damage(projectile.damage)
+        else:
+            new_projectiles.append(projectile)
+    left.projectiles=new_projectiles
 
 def collide(left, right):
+    # check for player vs projectile collisions
+    collide_projectiles(left, right)
+    collide_projectiles(right, left)
+    # continue with player vs player collision
     if not left.rect.colliderect(right.rect):
         return
     #deal damage
