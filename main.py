@@ -208,10 +208,12 @@ def playGame():
     clock = pygame.time.Clock()
     player1=Character(PLAYER1_CONTROLS, NARUTO_IMAGES, (5, 545))
     player2=Character(PLAYER2_CONTROLS, SASUKE_IMAGES, (740,545))
-    player1_hud=Hud({**HUD_IMAGES, "icon": NARUTO_IMAGES["icon"]},
-                    LEFT_HUD_POSITION)
-    player2_hud=Hud({**HUD_IMAGES, "icon": SASUKE_IMAGES["icon"]},
-                    RIGHT_HUD_POSITION)
+    HUD1_IMAGES=HUD_IMAGES.copy()
+    HUD1_IMAGES["icon"]=NARUTO_IMAGES["icon"]
+    HUD2_IMAGES=HUD_IMAGES.copy()
+    HUD2_IMAGES["icon"]=SASUKE_IMAGES["icon"]
+    player1_hud=Hud(HUD1_IMAGES, LEFT_HUD_POSITION)
+    player2_hud=Hud(HUD2_IMAGES, RIGHT_HUD_POSITION)
     player2_hud.flip()
     background=load_image("Background/training_background.png")
     background=pygame.transform.scale(background, (WIDTH, HEIGHT))
