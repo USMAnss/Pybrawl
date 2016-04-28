@@ -55,8 +55,8 @@ def playGame(character1, character2):
     pygame.mixer.music.play(-1)
     displaysurf = pygame.display.set_mode((WIDTH, HEIGHT))
     clock = pygame.time.Clock()
-    player1=Character(PLAYER1_CONTROLS, IMAGES[character1], PLAYER1_POSITION)
-    player2=Character(PLAYER2_CONTROLS, IMAGES[character2], PLAYER2_POSITION)
+    player1=Character(PLAYER1_CONTROLS, IMAGES[character1], SOUNDS[character1], PLAYER1_POSITION)
+    player2=Character(PLAYER2_CONTROLS, IMAGES[character2], SOUNDS[character2], PLAYER2_POSITION)
     HUD1_IMAGES=HUD_IMAGES.copy()
     HUD1_IMAGES["icon"]=IMAGES[character1]["icon"]
     HUD2_IMAGES=HUD_IMAGES.copy()
@@ -101,4 +101,4 @@ def playGame(character1, character2):
         pygame.display.update()
 
 if __name__ == "__main__":
-    playGame("suigetsu", "sasuke")
+    playGame("naruto", "sasuke")

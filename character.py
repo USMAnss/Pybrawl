@@ -1,13 +1,13 @@
 import pygame
 from pygame.locals import *
-from load import load_image
+from load import *
 
 class Character:
 
     THROW_MANA=300
     SPECIAL_MANA=500
 
-    def __init__(self, controls, images, position):
+    def __init__(self, controls, images, sounds, position):
         self.stance=images["stance"]
         self.runright=images["runright"]
         self.runleft=images["runleft"]
@@ -20,6 +20,7 @@ class Character:
         self.projectile_images={"throw": images["throw_projectile"],
                                 "special": images["special_projectile"]}
         self.projectiles=[]
+        self.sounds={key: load_sound(value) for key, value in sounds.items()}
         self.ani_stance=Animation(self.stance, 10)
         self.ani_runright=Animation(self.runright, 7)
         self.ani_runleft=Animation(self.runleft, 7)
@@ -96,6 +97,9 @@ class Character:
                 self.state="runleft"
             else:
                 self.state="stance"
+
+            if self.state in self.sounds:
+                self.sounds[self.state].play()
 
         if self.state=="runright":
             self.rect.x+=4

@@ -182,6 +182,23 @@ IMAGES = {
                    "icon": "Hud/suigetsu_icon.png"}
 }
 
+SOUNDS = {
+    "naruto": {
+        "throw": "Naruto/sounds/throw.ogg",
+        "special": "Naruto/sounds/special.ogg"
+    },
+
+    "sasuke": {
+        "throw": "Sasuke/sounds/throw.ogg",
+        "special": "Sasuke/sounds/special.ogg"
+    },
+
+    "suigetsu": {
+        "throw": "Suigetsu/sounds/throw.ogg",
+        "special": "Suigetsu/sounds/special.ogg"
+    }
+}
+
 HUD_IMAGES = {"frame": "Hud/frame.png",
               "health": "Hud/health.png",
               "mana": "Hud/mana.png"}
