@@ -3,6 +3,10 @@ from pygame.locals import *
 from load import load_image
 
 class Character:
+
+    THROW_MANA=300
+    SPECIAL_MANA=500
+
     def __init__(self, controls, images, position):
         self.stance=images["stance"]
         self.runright=images["runright"]
@@ -11,7 +15,10 @@ class Character:
         self.attack=images["attack"]
         self.takedamage=images["takedamage"]
         self.throw=images["throw"]
-        self.projectile_images={"throw": images["throw_projectile"]}
+        self.special=images["special"]
+        self.block=images["block"]
+        self.projectile_images={"throw": images["throw_projectile"],
+                                "special": images["special_projectile"]}
         self.projectiles=[]
         self.ani_stance=Animation(self.stance, 10)
         self.ani_runright=Animation(self.runright, 7)
@@ -20,6 +27,8 @@ class Character:
         self.ani_attack=Animation(self.attack, 7)
         self.ani_takedamage=Animation(self.takedamage, 10)
         self.ani_throw=Animation(self.throw, 7)
+        self.ani_special=Animation(self.special, 7)
+        self.ani_block=Animation(self.block, 10)
         self.state="stance"
         self.img=self.ani_stance.img
         self.rect=self.img.get_rect()
@@ -36,8 +45,10 @@ class Character:
         self.replenish_mana()
         self.update_projectiles()
 
-        if ((self.state!="jump" and self.state!="attack" and self.state!="takedamage" and self.state!="throw") or
-            (self.ani_jump.done or self.ani_attack.done or self.ani_takedamage.done or self.ani_throw.done)):
+        if ((self.state!="jump" and self.state!="attack" and self.state!="takedamage" and
+             self.state!="throw" and self.state!="special" and self.state!="block") or
+            (self.ani_jump.done or self.ani_attack.done or self.ani_takedamage.done or
+             self.ani_throw.done or self.ani_special.done or self.ani_block.done)):
             if self.state=="throw":
                 if self.direction=="left":
                     self.projectiles.append(Projectile(self.rect.midleft,
@@ -49,17 +60,34 @@ class Character:
                                                        (+7, 0),
                                                        100,
                                                        *self.projectile_images["throw"]))
+            elif self.state=="special":
+                if self.direction=="left":
+                    self.projectiles.append(Projectile(self.rect.midleft,
+                                                       (-7, 0),
+                                                       200,
+                                                       *self.projectile_images["special"]))
+                elif self.direction=="right":
+                    self.projectiles.append(Projectile(self.rect.midright,
+                                                       (+7, 0),
+                                                       200,
+                                                       *self.projectile_images["special"]))
 
             self.ani_jump.reset()
             self.ani_attack.reset()
             self.ani_takedamage.reset()
             self.ani_throw.reset()
+            self.ani_special.reset()
+            self.ani_block.reset()
             if keys_status[self.controls["jump"]]:
                 self.state="jump"
+            elif keys_status[self.controls["special"]] and self.mana>=self.SPECIAL_MANA:
+                self.state="special"
+                self.mana-=self.SPECIAL_MANA
             elif keys_status[self.controls["attack"]]:
                 self.state="attack"
-            elif keys_status[self.controls["throw"]]:
+            elif keys_status[self.controls["throw"]] and self.mana>=self.THROW_MANA:
                 self.state="throw"
+                self.mana-=self.THROW_MANA
             elif keys_status[self.controls["right"]] and keys_status[self.controls["left"]]:
                 self.state="stance"
             elif keys_status[self.controls["right"]]:
@@ -87,7 +115,7 @@ class Character:
                 self.rect.x-=1
             elif self.direction=="right":
                 self.rect.x+=1
-        elif self.state=="takedamage":
+        elif self.state=="takedamage" and self.state=="block":
             if self.direction=="left":
                 self.rect.x+=1
             elif self.direction=="right":
@@ -114,6 +142,12 @@ class Character:
         elif self.state=="throw":
             self.ani_throw.update()
             self.img=self.ani_throw.img
+        elif self.state=="special":
+            self.ani_special.update()
+            self.img=self.ani_special.img
+        elif self.state=="block":
+            self.ani_block.update()
+            self.img=self.ani_block.img
 
         self.old_rect=self.rect
         self.rect=self.img.get_rect()
@@ -135,12 +169,16 @@ class Character:
             self.rect.bottom=screen.get_height()
 
     def take_damage(self, damage):
-        if self.state!="takedamage":
-            self.health=max(0, self.health-damage)
-            self.state="takedamage"
+        if self.state!="takedamage" and self.state!="block":
+            if (self.direction=="left" and self.state=="runright" or
+                self.direction=="right" and self.state=="runleft"):
+                self.state="block"
+            else:
+                self.health=max(0, self.health-damage)
+                self.state="takedamage"
 
     def replenish_mana(self):
-        self.mana=min(self.max_mana, self.mana+100)
+        self.mana=min(self.max_mana, self.mana+1)
 
     def update_projectiles(self):
         new_projectiles=[]
@@ -194,7 +232,10 @@ class Projectile:
         self.damage=damage
 
     def draw(self, screen):
-        screen.blit(self.ani.img, self.rect)
+        if self.velocity[0] < 0:
+            screen.blit(pygame.transform.flip(self.ani.img, True, False), self.rect)
+        else:
+            screen.blit(self.ani.img, self.rect)
 
     def update(self):
         self.rect.x+=self.velocity[0]

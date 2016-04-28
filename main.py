@@ -50,6 +50,17 @@ NARUTO_IMAGES = {"stance": ["Naruto/new_sprites/stance0.png",
                            "Naruto/new_sprites/throw2.png",
                            "Naruto/new_sprites/throw3.png",
                            "Naruto/new_sprites/throw4.png"],
+                 "special": ["Naruto/new_sprites/special0.png",
+                             "Naruto/new_sprites/special1.png",
+                             "Naruto/new_sprites/special2.png",
+                             "Naruto/new_sprites/special3.png",
+                             "Naruto/new_sprites/special4.png",
+                             "Naruto/new_sprites/special5.png",
+                             "Naruto/new_sprites/special6.png",
+                             "Naruto/new_sprites/special7.png",
+                             "Naruto/new_sprites/special8.png",
+                             "Naruto/new_sprites/special9.png"],
+                 "block": ["Naruto/new_sprites/block0.png"],
                  "throw_projectile": [["Naruto/new_sprites/rasengan0.png",
                                        "Naruto/new_sprites/rasengan1.png",
                                        "Naruto/new_sprites/rasengan2.png",
@@ -57,6 +68,13 @@ NARUTO_IMAGES = {"stance": ["Naruto/new_sprites/stance0.png",
                                        "Naruto/new_sprites/rasengan4.png",
                                        "Naruto/new_sprites/rasengan5.png"],
                                       (4, 5)],
+                 "special_projectile": [["Naruto/new_sprites/kyuubi0.png",
+                                         "Naruto/new_sprites/kyuubi1.png",
+                                         "Naruto/new_sprites/kyuubi2.png",
+                                         # "Naruto/new_sprites/kyuubi3.png",
+                                         # "Naruto/new_sprites/kyuubi4.png",
+                                         "Naruto/new_sprites/kyuubi5.png"],
+                                        (3, 3)],
                  "icon": "Hud/naruto_icon.png"}
 
 SASUKE_IMAGES = {"stance": ["Sasuke/new_sprites/stance0.gif",
@@ -94,6 +112,13 @@ SASUKE_IMAGES = {"stance": ["Sasuke/new_sprites/stance0.gif",
                            "Sasuke/new_sprites/throw1.png",
                            "Sasuke/new_sprites/throw2.png",
                            "Sasuke/new_sprites/throw3.png"],
+                 "special": ["Sasuke/new_sprites/special0.png",
+                             "Sasuke/new_sprites/special1.png",
+                             "Sasuke/new_sprites/special2.png",
+                             "Sasuke/new_sprites/special3.png",
+                             "Sasuke/new_sprites/special4.png",
+                             "Sasuke/new_sprites/special5.png"],
+                 "block": ["Sasuke/new_sprites/block0.png"],
                  "throw_projectile": [["Sasuke/new_sprites/lightning0.png",
                                        "Sasuke/new_sprites/lightning1.png",
                                        "Sasuke/new_sprites/lightning2.png",
@@ -101,6 +126,13 @@ SASUKE_IMAGES = {"stance": ["Sasuke/new_sprites/stance0.gif",
                                        "Sasuke/new_sprites/lightning4.png",
                                        "Sasuke/new_sprites/lightning5.png"],
                                       (4, 5)],
+                 "special_projectile": [["Sasuke/new_sprites/katon0.png",
+                                         "Sasuke/new_sprites/katon1.png",
+                                         "Sasuke/new_sprites/katon2.png",
+                                         "Sasuke/new_sprites/katon3.png",
+                                         "Sasuke/new_sprites/katon4.png",
+                                         "Sasuke/new_sprites/katon5.png"],
+                                        (3, 5)],
                  "icon": "Hud/sasuke_icon.png"}
 
 HUD_IMAGES = {"frame": "Hud/frame.png",
@@ -114,13 +146,15 @@ PLAYER1_CONTROLS = {"left": K_a,
                     "right": K_d,
                     "jump": K_w,
                     "attack": K_t,
-                    "throw": K_y}
+                    "throw": K_y,
+                    "special": K_u}
 
 PLAYER2_CONTROLS = {"left": K_LEFT,
                     "right": K_RIGHT,
                     "jump": K_UP,
                     "attack": K_KP4,
-                    "throw": K_KP5}
+                    "throw": K_KP5,
+                    "special": K_KP6}
 
 def collide_projectiles(left, right):
     new_projectiles=[]
@@ -138,12 +172,12 @@ def collide(left, right):
     # continue with player vs player collision
     if not left.rect.colliderect(right.rect):
         return
-    #deal damage
+    # deal damage
     if left.state=="attack":
         right.take_damage(left.damage)
     if right.state=="attack":
         left.take_damage(right.damage)
-    #adjust position
+    # adjust position
     if left.rect.centerx>right.rect.centerx:
         left, right=right, left
     overlap=left.rect.right-right.rect.left
