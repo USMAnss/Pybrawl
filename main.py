@@ -18,7 +18,8 @@ WIDTH=800
 HEIGHT=600
 FPS=60
 
-NARUTO_IMAGES = {"stance": ["Naruto/new_sprites/stance0.png",
+IMAGES = {
+    "naruto": {"stance": ["Naruto/new_sprites/stance0.png",
                             "Naruto/new_sprites/stance1.png",
                             "Naruto/new_sprites/stance2.png",
                             "Naruto/new_sprites/stance3.png"],
@@ -75,9 +76,9 @@ NARUTO_IMAGES = {"stance": ["Naruto/new_sprites/stance0.png",
                                          # "Naruto/new_sprites/kyuubi4.png",
                                          "Naruto/new_sprites/kyuubi5.png"],
                                         (3, 3)],
-                 "icon": "Hud/naruto_icon.png"}
+                 "icon": "Hud/naruto_icon.png"},
 
-SASUKE_IMAGES = {"stance": ["Sasuke/new_sprites/stance0.gif",
+    "sasuke": {"stance": ["Sasuke/new_sprites/stance0.gif",
                             "Sasuke/new_sprites/stance1.gif",
                             "Sasuke/new_sprites/stance2.gif",
                             "Sasuke/new_sprites/stance3.gif",
@@ -134,6 +135,7 @@ SASUKE_IMAGES = {"stance": ["Sasuke/new_sprites/stance0.gif",
                                          "Sasuke/new_sprites/katon5.png"],
                                         (3, 5)],
                  "icon": "Hud/sasuke_icon.png"}
+}
 
 HUD_IMAGES = {"frame": "Hud/frame.png",
               "health": "Hud/health.png",
@@ -199,19 +201,19 @@ def keep_inside(player):
     elif player.rect.left<0:
         player.rect.left=0
 
-def playGame():
+def playGame(character1, character2):
     pygame.init()
     pygame.mixer.init()
     pygame.mixer.music.load("Sound/07 - The Raising Fighting Spirit.ogg")
     pygame.mixer.music.play(-1)
     displaysurf = pygame.display.set_mode((WIDTH, HEIGHT))
     clock = pygame.time.Clock()
-    player1=Character(PLAYER1_CONTROLS, NARUTO_IMAGES, (5, 545))
-    player2=Character(PLAYER2_CONTROLS, SASUKE_IMAGES, (740,545))
+    player1=Character(PLAYER1_CONTROLS, IMAGES[character1], (5, 545))
+    player2=Character(PLAYER2_CONTROLS, IMAGES[character2], (740,545))
     HUD1_IMAGES=HUD_IMAGES.copy()
-    HUD1_IMAGES["icon"]=NARUTO_IMAGES["icon"]
+    HUD1_IMAGES["icon"]=IMAGES[character1]["icon"]
     HUD2_IMAGES=HUD_IMAGES.copy()
-    HUD2_IMAGES["icon"]=SASUKE_IMAGES["icon"]
+    HUD2_IMAGES["icon"]=IMAGES[character2]["icon"]
     player1_hud=Hud(HUD1_IMAGES, LEFT_HUD_POSITION)
     player2_hud=Hud(HUD2_IMAGES, RIGHT_HUD_POSITION)
     player2_hud.flip()
@@ -252,4 +254,4 @@ def playGame():
         pygame.display.update()
 
 if __name__ == "__main__":
-    playGame()
+    playGame("naruto", "sasuke")
