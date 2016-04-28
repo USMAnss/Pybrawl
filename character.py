@@ -23,7 +23,7 @@ class Character:
         self.ani_stance=Animation(self.stance, 10)
         self.ani_runright=Animation(self.runright, 7)
         self.ani_runleft=Animation(self.runleft, 7)
-        self.ani_jump=Animation(self.jump, 13)
+        self.ani_jump=Animation(self.jump, 10)
         self.ani_attack=Animation(self.attack, 7)
         self.ani_takedamage=Animation(self.takedamage, 10)
         self.ani_throw=Animation(self.throw, 7)
@@ -52,23 +52,23 @@ class Character:
             if self.state=="throw":
                 if self.direction=="left":
                     self.projectiles.append(Projectile(self.rect.midleft,
-                                                       (-7, 0),
+                                                       (-10, 0),
                                                        100,
                                                        *self.projectile_images["throw"]))
                 elif self.direction=="right":
                     self.projectiles.append(Projectile(self.rect.midright,
-                                                       (+7, 0),
+                                                       (+10, 0),
                                                        100,
                                                        *self.projectile_images["throw"]))
             elif self.state=="special":
                 if self.direction=="left":
                     self.projectiles.append(Projectile(self.rect.midleft,
-                                                       (-7, 0),
+                                                       (-9, 0),
                                                        200,
                                                        *self.projectile_images["special"]))
                 elif self.direction=="right":
                     self.projectiles.append(Projectile(self.rect.midright,
-                                                       (+7, 0),
+                                                       (+9, 0),
                                                        200,
                                                        *self.projectile_images["special"]))
 
@@ -98,23 +98,23 @@ class Character:
                 self.state="stance"
 
         if self.state=="runright":
-            self.rect.x+=3
+            self.rect.x+=4
         elif self.state=="runleft":
-            self.rect.x-=3
+            self.rect.x-=4
         elif self.state=="jump":
             if self.ani_jump.ani_pos < self.ani_jump.ani_max / 2:
-                self.rect.y-=5
+                self.rect.y-=7
             else:
-                self.rect.y+=5
+                self.rect.y+=7
             if keys_status[self.controls["right"]]:
-                self.rect.x+=3
+                self.rect.x+=4
             elif keys_status[self.controls["left"]]:
-                self.rect.x-=3
+                self.rect.x-=4
         elif self.state=="attack":
             if self.direction=="left":
-                self.rect.x-=1
+                self.rect.x-=2
             elif self.direction=="right":
-                self.rect.x+=1
+                self.rect.x+=2
         elif self.state=="takedamage" and self.state=="block":
             if self.direction=="left":
                 self.rect.x+=1
