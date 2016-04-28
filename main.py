@@ -101,4 +101,4 @@ def playGame(character1, character2):
         pygame.display.update()
 
 if __name__ == "__main__":
-    playGame("naruto", "sasuke")
+    playGame("suigetsu", "sasuke")
