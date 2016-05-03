@@ -17,6 +17,7 @@ class Character:
         self.throw=images["throw"]
         self.special=images["special"]
         self.block=images["block"]
+        self.introduction=images["introduction"]
         self.projectile_images={"throw": images["throw_projectile"],
                                 "special": images["special_projectile"]}
         self.projectiles=[]
@@ -30,7 +31,8 @@ class Character:
         self.ani_throw=Animation(self.throw, 7)
         self.ani_special=Animation(self.special, 7)
         self.ani_block=Animation(self.block, 10)
-        self.state="stance"
+        self.ani_introduction=Animation(self.introduction, 10)
+        self.state="introduction"
         self.img=self.ani_stance.img
         self.rect=self.img.get_rect()
         self.rect.topleft=position
@@ -47,9 +49,11 @@ class Character:
         self.update_projectiles()
 
         if ((self.state!="jump" and self.state!="attack" and self.state!="takedamage" and
-             self.state!="throw" and self.state!="special" and self.state!="block") or
+             self.state!="throw" and self.state!="special" and self.state!="block" and
+             self.state!="introduction") or
             (self.ani_jump.done or self.ani_attack.done or self.ani_takedamage.done or
-             self.ani_throw.done or self.ani_special.done or self.ani_block.done)):
+             self.ani_throw.done or self.ani_special.done or self.ani_block.done or
+             self.ani_introduction.done)):
             if self.state=="throw":
                 if self.direction=="left":
                     self.projectiles.append(Projectile(self.rect.midleft,
@@ -152,6 +156,9 @@ class Character:
         elif self.state=="block":
             self.ani_block.update()
             self.img=self.ani_block.img
+        elif self.state=="introduction":
+            self.ani_introduction.update()
+            self.img=self.ani_introduction.img
 
         self.old_rect=self.rect
         self.rect=self.img.get_rect()
