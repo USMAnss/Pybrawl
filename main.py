@@ -4,6 +4,8 @@ from character import Character
 from hud import Hud
 from load import load_image
 from settings import *
+import dumbmenu as dm
+
 
 def collide_projectiles(left, right):
     new_projectiles=[]
@@ -66,7 +68,10 @@ def playGame(character1, character2):
     player2_hud.flip()
     background=load_image("Background/training_background.png")
     background=pygame.transform.scale(background, (WIDTH, HEIGHT))
-    pygame.display.set_caption('Pygame')
+    player1_wins=load_image("Background/player1wins.png")
+    player2_wins=load_image("Background/player2wins.png")
+    pygame.display.set_caption('Pybrawl')
+    game_over=False
     while True: # main game loop
         displaysurf.blit(background, (0,0))
         clock.tick(FPS)
@@ -74,8 +79,23 @@ def playGame(character1, character2):
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
-        player1.update(pygame.key.get_pressed())
-        player2.update(pygame.key.get_pressed())
+            elif event.type == KEYDOWN and event.key == K_RETURN and game_over:
+                return
+
+        if player1.health==0:
+            game_over=True
+            displaysurf.blit(player2_wins, (172, 200))
+
+        if player2.health==0:
+            game_over=True
+            displaysurf.blit(player1_wins, (172, 200))
+
+        keys_status=pygame.key.get_pressed()
+        if game_over:
+            keys_status=[False for i in keys_status]
+
+        player1.update(keys_status)
+        player2.update(keys_status)
 
         collide(player1, player2)
 
@@ -100,5 +120,76 @@ def playGame(character1, character2):
         player2_hud.draw(displaysurf)
         pygame.display.update()
 
+def menu():
+    # colors
+    white = 255,255,255
+    black =   0,  0,  0
+    orange = 255,165, 0
+    ###http://www.discoveryplayground.com/computer-programming-for-kids/rgb-colors/
+
+    size = width, height = WIDTH,HEIGHT
+    pygame.display.set_caption('Pybrawl')
+
+    while True:
+        screen = pygame.display.set_mode(size)
+        pygame.key.set_repeat(500,30)
+        background = load_image("Background/main_menu.png")
+        background=pygame.transform.scale(background, (WIDTH, HEIGHT))
+        screen.blit(background, (0, 0))
+        pygame.display.update()
+
+        selection = dm.dumbmenu(screen, [
+                                'Start Game',
+                                'Help',
+                                'Quit Game'], 325,375,None,32,1.4,white,white)
+
+        if selection == 0:
+            screen.blit(background, (0, 0))
+            pygame.display.update()
+            pygame.key.set_repeat(500,30)
+            selectionTwo = dm.dumbmenu(screen, [
+                            'Naruto',
+                            'Sasuke',
+                            'Suigetsu',
+                            'Itachi',
+                            'Jiraiya',
+                            'To Main Menu'], 325,375,None,32,1.4,white,white)
+            characters=["naruto", "sasuke", "suigetsu", "itachi", "jiraiya"]
+
+            if selectionTwo==-1:
+                print("You choose 'Quit'")
+                pygame.quit()
+                exit()
+
+            if selectionTwo==5:
+                continue
+
+            screen.blit(background, (0, 0))
+            pygame.display.update()
+            pygame.key.set_repeat(500,30)
+            selectionThree = dm.dumbmenu(screen, [
+                            'Naruto',
+                            'Sasuke',
+                            'Suigetsu',
+                            'Itachi',
+                            'Jiraiya',
+                            'To Main Menu'], 325,375,None,32,1.4,white,white)
+            if selectionThree==-1:
+                print("You choose 'Quit'")
+                pygame.quit()
+                exit()
+
+            if selectionThree==5:
+                continue
+
+            playGame(characters[selectionTwo], characters[selectionThree])
+
+        elif selection == 1:
+            print('help')
+        elif selection == 2 or selection == -1:
+            print("You choose 'Quit'")
+            pygame.quit()
+            exit()
+
 if __name__ == "__main__":
-    playGame("naruto", "suigetsu")
+   menu()

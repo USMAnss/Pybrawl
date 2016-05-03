@@ -267,7 +267,7 @@ IMAGES = {
                                          "Itachi/katon6.png",
                                          "Itachi/katon7.png"],
                                         (4, 7)],
-                 "icon": "Itachi/icon.png"},
+                 "icon": "Hud/itachi_icon.png"},
     "jiraiya": {"introduction": ["Jiraiya/introduction0.png",
                                    "Jiraiya/introduction1.png",
                                    "Jiraiya/introduction2.png",
@@ -324,7 +324,7 @@ IMAGES = {
                                           "Jiraiya/rasengan4.png",
                                           "Jiraiya/rasengan5.png"],
                                          (0, 2)],
-                  "icon": "Jiraiya/icon.png"},
+                  "icon": "Hud/jiraiya_icon.png"},
 }
 
 SOUNDS = {
@@ -341,6 +341,16 @@ SOUNDS = {
     "suigetsu": {
         "throw": "Suigetsu/sounds/throw.ogg",
         "special": "Suigetsu/sounds/special.ogg"
+    },
+
+    "itachi": {
+        "throw": "Itachi/sounds/throw.ogg",
+        "special": "Itachi/sounds/special.ogg"
+    },
+
+    "jiraiya": {
+        "throw": "Jiraiya/sounds/throw.ogg",
+        "special": "Jiraiya/sounds/special.ogg"
     }
 }
 
