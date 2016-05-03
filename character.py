@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 from load import *
+from settings import *
 
 class Character:
 
@@ -8,34 +9,26 @@ class Character:
     SPECIAL_MANA=500
 
     def __init__(self, controls, images, sounds, position):
-        self.stance=images["stance"]
-        self.runright=images["runright"]
-        self.runleft=images["runleft"]
-        self.jump=images["jump"]
-        self.attack=images["attack"]
-        self.takedamage=images["takedamage"]
-        self.throw=images["throw"]
-        self.special=images["special"]
-        self.block=images["block"]
-        self.introduction=images["introduction"]
-        self.death=images["death"]
         self.projectile_images={"throw": images["throw_projectile"],
                                 "special": images["special_projectile"]}
         self.projectiles=[]
+        self.animations={
+            "stance": Animation(images["stance"], 10),
+            "runright": Animation(images["runright"], 7),
+            "runleft": Animation(images["runleft"], 7),
+            "jump": Animation(images["jump"], 10),
+            "attack": Animation(images["attack"], 7),
+            "takedamage": Animation(images["takedamage"], 10),
+            "throw": Animation(images["throw"], 7),
+            "special": Animation(images["special"], 7),
+            "block": Animation(images["block"], 10),
+            "introduction": Animation(images["introduction"], 10),
+            "death": Animation(images["death"], 10, (len(images["death"]) - 1,
+                                                     len(images["death"]) - 1))
+        }
         self.sounds={key: load_sound(value) for key, value in sounds.items()}
-        self.ani_stance=Animation(self.stance, 10)
-        self.ani_runright=Animation(self.runright, 7)
-        self.ani_runleft=Animation(self.runleft, 7)
-        self.ani_jump=Animation(self.jump, 10)
-        self.ani_attack=Animation(self.attack, 7)
-        self.ani_takedamage=Animation(self.takedamage, 10)
-        self.ani_throw=Animation(self.throw, 7)
-        self.ani_special=Animation(self.special, 7)
-        self.ani_block=Animation(self.block, 10)
-        self.ani_introduction=Animation(self.introduction, 10)
-        self.ani_death=Animation(self.death, 10, (len(self.death) - 1, len(self.death) - 1))
         self.state="introduction"
-        self.img=self.ani_stance.img
+        self.img=self.animations["stance"].img
         self.rect=self.img.get_rect()
         self.rect.topleft=position
         self.direction="right"
@@ -58,12 +51,8 @@ class Character:
         self.update_image_direction()
 
     def update_state(self, keys_status):
-        if ((self.state!="jump" and self.state!="attack" and self.state!="takedamage" and
-             self.state!="throw" and self.state!="special" and self.state!="block" and
-             self.state!="introduction") or
-            (self.ani_jump.done or self.ani_attack.done or self.ani_takedamage.done or
-             self.ani_throw.done or self.ani_special.done or self.ani_block.done or
-             self.ani_introduction.done)):
+        if (self.state not in ["jump", "attack", "takedamage", "throw", "special", "block", "introduction"] or
+            self.animations[self.state].done):
             if self.state=="throw":
                 if self.direction=="left":
                     self.projectiles.append(Projectile(self.rect.midleft,
@@ -87,13 +76,8 @@ class Character:
                                                        200,
                                                        *self.projectile_images["special"]))
 
-            self.ani_jump.reset()
-            self.ani_attack.reset()
-            self.ani_takedamage.reset()
-            self.ani_throw.reset()
-            self.ani_special.reset()
-            self.ani_block.reset()
-            self.ani_introduction.reset()
+            if self.state in ["jump", "attack", "takedamage", "throw", "special", "block", "introduction"]:
+                self.animations[self.state].reset()
 
             if self.state=="takedamage" and self.health==0:
                 self.state="death"
@@ -125,7 +109,7 @@ class Character:
         elif self.state=="runleft":
             self.rect.x-=4
         elif self.state=="jump":
-            if self.ani_jump.ani_pos < self.ani_jump.ani_max / 2:
+            if self.animations["jump"].ani_pos < self.animations["jump"].ani_max / 2:
                 self.rect.y-=7
             else:
                 self.rect.y+=7
@@ -145,39 +129,8 @@ class Character:
                 self.rect.x-=1
 
     def update_animation(self):
-        if self.state=="stance":
-            self.ani_stance.update()
-            self.img=self.ani_stance.img
-        elif self.state=="attack":
-            self.ani_attack.update()
-            self.img=self.ani_attack.img
-        elif self.state=="runright":
-            self.ani_runright.update()
-            self.img=self.ani_runright.img
-        elif self.state=="runleft":
-            self.ani_runleft.update()
-            self.img=self.ani_runleft.img
-        elif self.state=="jump":
-            self.ani_jump.update()
-            self.img=self.ani_jump.img
-        elif self.state=="takedamage":
-            self.ani_takedamage.update()
-            self.img=self.ani_takedamage.img
-        elif self.state=="throw":
-            self.ani_throw.update()
-            self.img=self.ani_throw.img
-        elif self.state=="special":
-            self.ani_special.update()
-            self.img=self.ani_special.img
-        elif self.state=="block":
-            self.ani_block.update()
-            self.img=self.ani_block.img
-        elif self.state=="introduction":
-            self.ani_introduction.update()
-            self.img=self.ani_introduction.img
-        elif self.state=="death":
-            self.ani_death.update()
-            self.img=self.ani_death.img
+        self.animations[self.state].update()
+        self.img=self.animations[self.state].img
 
     def update_image_direction(self):
         self.old_rect=self.rect
@@ -199,7 +152,7 @@ class Character:
             self.rect.bottom=screen.get_height()
 
     def take_damage(self, damage):
-        if self.state!="death" and self.state!="takedamage" and self.state!="block":
+        if self.state not in ["death", "takedamage", "block"]:
             if (self.direction=="left" and self.state=="runright" or
                 self.direction=="right" and self.state=="runleft"):
                 self.state="block"
@@ -213,7 +166,7 @@ class Character:
     def update_projectiles(self):
         new_projectiles=[]
         for projectile in self.projectiles:
-            if projectile.is_on_screen(800, 600):
+            if projectile.is_on_screen(WIDTH, HEIGHT):
                 projectile.update()
                 new_projectiles.append(projectile)
         self.projectiles=new_projectiles

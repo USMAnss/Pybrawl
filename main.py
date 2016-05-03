@@ -39,12 +39,12 @@ def collide(left, right):
         right.rect.centerx+=(overlap+1)//2
     if left.state=="jump" and left.rect.left<0:
         left.rect.left=right.rect.right
-    if right.state=="jump" and right.rect.right>800:
+    if right.state=="jump" and right.rect.right>WIDTH:
         right.rect.right=left.rect.left
 
 def keep_inside(player):
-    if player.rect.right>800:
-        player.rect.right=800
+    if player.rect.right>WIDTH:
+        player.rect.right=WIDTH
     elif player.rect.left<0:
         player.rect.left=0
 
