@@ -143,6 +143,23 @@ def menu():
                                 'Help',
                                 'Quit Game'], 325,375,None,32,1.4,white,white)
 
+        if selection == 1:
+            screen.fill(black)
+            font = pygame.font.Font(None, 50)
+            text = font.render("Hello", True, white)
+            screen.blit(text, (100, 100))
+            pygame.display.update()
+            ok=True
+            while ok:
+                for event in pygame.event.get():
+                    if event.type == QUIT:
+                        print("You choose 'Quit'")
+                        pygame.quit()
+                        exit()
+                    if event.type == KEYDOWN and event.key==K_ESCAPE:
+                        ok=False
+            continue
+
         if selection == 0:
             screen.blit(background, (0, 0))
             pygame.display.update()
