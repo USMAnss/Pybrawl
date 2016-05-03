@@ -18,6 +18,7 @@ class Character:
         self.special=images["special"]
         self.block=images["block"]
         self.introduction=images["introduction"]
+        self.death=images["death"]
         self.projectile_images={"throw": images["throw_projectile"],
                                 "special": images["special_projectile"]}
         self.projectiles=[]
@@ -32,6 +33,7 @@ class Character:
         self.ani_special=Animation(self.special, 7)
         self.ani_block=Animation(self.block, 10)
         self.ani_introduction=Animation(self.introduction, 10)
+        self.ani_death=Animation(self.death, 10, (len(self.death) - 1, len(self.death) - 1))
         self.state="introduction"
         self.img=self.ani_stance.img
         self.rect=self.img.get_rect()
@@ -45,9 +47,17 @@ class Character:
         self.damage=100
 
     def update(self, keys_status):
-        self.replenish_mana()
         self.update_projectiles()
 
+        if self.state!="death":
+            self.replenish_mana()
+            self.update_state(keys_status)
+            self.update_position(keys_status)
+
+        self.update_animation()
+        self.update_image_direction()
+
+    def update_state(self, keys_status):
         if ((self.state!="jump" and self.state!="attack" and self.state!="takedamage" and
              self.state!="throw" and self.state!="special" and self.state!="block" and
              self.state!="introduction") or
@@ -83,7 +93,11 @@ class Character:
             self.ani_throw.reset()
             self.ani_special.reset()
             self.ani_block.reset()
-            if keys_status[self.controls["jump"]]:
+            self.ani_introduction.reset()
+
+            if self.state=="takedamage" and self.health==0:
+                self.state="death"
+            elif keys_status[self.controls["jump"]]:
                 self.state="jump"
             elif keys_status[self.controls["special"]] and self.mana>=self.SPECIAL_MANA:
                 self.state="special"
@@ -105,6 +119,7 @@ class Character:
             if self.state in self.sounds:
                 self.sounds[self.state].play()
 
+    def update_position(self, keys_status):
         if self.state=="runright":
             self.rect.x+=4
         elif self.state=="runleft":
@@ -129,6 +144,7 @@ class Character:
             elif self.direction=="right":
                 self.rect.x-=1
 
+    def update_animation(self):
         if self.state=="stance":
             self.ani_stance.update()
             self.img=self.ani_stance.img
@@ -159,14 +175,17 @@ class Character:
         elif self.state=="introduction":
             self.ani_introduction.update()
             self.img=self.ani_introduction.img
+        elif self.state=="death":
+            self.ani_death.update()
+            self.img=self.ani_death.img
 
+    def update_image_direction(self):
         self.old_rect=self.rect
         self.rect=self.img.get_rect()
         self.rect.topleft=self.old_rect.topleft
 
         if self.direction=="left" and not self.state in ["runright", "runleft"]:
             self.img=pygame.transform.flip(self.img, True, False)
-
 
     def draw(self, screen):
         self.adjust_height(screen)
@@ -180,7 +199,7 @@ class Character:
             self.rect.bottom=screen.get_height()
 
     def take_damage(self, damage):
-        if self.state!="takedamage" and self.state!="block":
+        if self.state!="death" and self.state!="takedamage" and self.state!="block":
             if (self.direction=="left" and self.state=="runright" or
                 self.direction=="right" and self.state=="runleft"):
                 self.state="block"
