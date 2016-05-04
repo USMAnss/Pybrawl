@@ -4,6 +4,8 @@ WIDTH=800
 HEIGHT=600
 FPS=60
 
+#We downloaded and used sprites, background image and sounds for the character from the folowing webpage:
+#http://spritedatabase.net/game/1889
 IMAGES = {
     "naruto": {"introduction": ["Naruto/introduction0.png",
                                     "Naruto/introduction1.png",
@@ -353,6 +355,8 @@ SOUNDS = {
         "special": "Jiraiya/sounds/special.ogg"
     }
 }
+#Cropped the folowing image for the HUD:
+#http://www.indiedb.com/members/h0rm0nas/images/naruto-shadow-hud-by-me
 
 HUD_IMAGES = {"frame": "Hud/frame.png",
               "health": "Hud/health.png",

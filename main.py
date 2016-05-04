@@ -53,7 +53,7 @@ def keep_inside(player):
 def playGame(character1, character2):
     pygame.init()
     pygame.mixer.init()
-    pygame.mixer.music.load("Sound/07 - The Raising Fighting Spirit.ogg")
+    pygame.mixer.music.load("Sound/07 - The Raising Fighting Spirit.ogg") #Background music "The Rising Fighting Spirit":http://downloads.khinsider.com/game-soundtracks/album/naruto-original-soundtrack-1
     pygame.mixer.music.play(-1)
     displaysurf = pygame.display.set_mode((WIDTH, HEIGHT))
     clock = pygame.time.Clock()
@@ -66,9 +66,9 @@ def playGame(character1, character2):
     player1_hud=Hud(HUD1_IMAGES, LEFT_HUD_POSITION)
     player2_hud=Hud(HUD2_IMAGES, RIGHT_HUD_POSITION)
     player2_hud.flip()
-    background=load_image("Background/training_background.png")
+    background=load_image("Background/training_background.png") #http://spritedatabase.net/game/1889
     background=pygame.transform.scale(background, (WIDTH, HEIGHT))
-    player1_wins=load_image("Background/player1wins.png")
+    player1_wins=load_image("Background/player1wins.png") #Used the folowing website to generate the win signs: http://www.dafont.com/ninja-naruto.font
     player2_wins=load_image("Background/player2wins.png")
     pygame.display.set_caption('Pybrawl')
     game_over=False
@@ -145,9 +145,35 @@ def menu():
 
         if selection == 1:
             screen.fill(black)
-            font = pygame.font.Font(None, 50)
-            text = font.render("Hello", True, white)
-            screen.blit(text, (100, 100))
+            font = pygame.font.Font(None, 40)
+            text = font.render("Player 1 Controls:", True, white)
+            screen.blit(text, (50, 50))
+            text = font.render("WAD - Move", True, white)
+            screen.blit(text, (50, 100))
+            text = font.render("T - basic attack", True, white)
+            screen.blit(text, (50, 140))
+            text = font.render("Y - throw attack", True, white)
+            screen.blit(text, (50, 180))
+            text = font.render("U - special attack", True, white)
+            screen.blit(text, (50, 220))
+            text = font.render("Back - block if being hit", True, white)
+            screen.blit(text, (50, 260))
+            text = font.render("Player 2 Controls:", True, white)
+            screen.blit(text, (450, 50))
+            text = font.render("Arrow keys - Move", True, white)
+            screen.blit(text, (450, 100))
+            text = font.render("NUM4 - basic attack", True, white)
+            screen.blit(text, (450, 140))
+            text = font.render("NUM5 - throw attack", True, white)
+            screen.blit(text, (450, 180))
+            text = font.render("NUM6 - special attack", True, white)
+            screen.blit(text, (450, 220))
+            text = font.render("Back - block if being hit", True, white)
+            screen.blit(text, (450, 260))
+            text = font.render("Enter - go back to Main Menu when the fight ends", True, white)
+            screen.blit(text, (60, 300))
+            text = font.render("Escape - back to Main Menu", True, white)
+            screen.blit(text, (200, 500))
             pygame.display.update()
             ok=True
             while ok:
@@ -201,8 +227,6 @@ def menu():
 
             playGame(characters[selectionTwo], characters[selectionThree])
 
-        elif selection == 1:
-            print('help')
         elif selection == 2 or selection == -1:
             print("You choose 'Quit'")
             pygame.quit()

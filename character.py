@@ -3,6 +3,15 @@ from pygame.locals import *
 from load import *
 from settings import *
 
+#For the Character and Animation classes we used ideas from the following YouTube videos:
+#Class tutorial: https://www.youtube.com/watch?v=DEJRiu4jfog
+#Pygame sprites: https://www.youtube.com/watch?v=kovYl14_--8
+#Class sprite: https://www.youtube.com/watch?v=qizBIzhHbtk 
+#              https://www.youtube.com/watch?v=k9OYUcQwKgY
+#We referenced and used ideas form the StreetPyghter game found on the pygame website for
+#coding the movements and build and improved around them:
+#http://pygame.org/project-Street+pyghter-1860-3264.html
+
 class Character:
 
     THROW_MANA=300
