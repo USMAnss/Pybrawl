@@ -4,6 +4,14 @@
 import pygame, sys
 from settings import *
 
+
+
+# This file is created by Manuel Kammermeier and is available on:
+# http://pygame.org/project-dumbmenu-1425-.html
+# We used this file to help us create the menu interface for our game.
+
+
+
 # **********************************************************************
 # Function "dumbmenu" **************************************************
 # **********************************************************************

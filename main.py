@@ -84,10 +84,12 @@ def playGame(character1, character2):
 
         if player1.health==0:
             game_over=True
+            pygame.mixer.music.stop()
             displaysurf.blit(player2_wins, (172, 200))
 
         if player2.health==0:
             game_over=True
+            pygame.mixer.music.stop()
             displaysurf.blit(player1_wins, (172, 200))
 
         keys_status=pygame.key.get_pressed()
@@ -120,12 +122,14 @@ def playGame(character1, character2):
         player2_hud.draw(displaysurf)
         pygame.display.update()
 
+
+#To create the menu interface, we used dumbmenu from the pygame website. The dumbmenu file is in our folder and we altered it so that the menu options are not numbered.
 def menu():
     # colors
     white = 255,255,255
     black =   0,  0,  0
     orange = 255,165, 0
-    ###http://www.discoveryplayground.com/computer-programming-for-kids/rgb-colors/
+    ### We found the numbers for different colors on: http://www.discoveryplayground.com/computer-programming-for-kids/rgb-colors/
 
     size = width, height = WIDTH,HEIGHT
     pygame.display.set_caption('Pybrawl')
